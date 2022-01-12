@@ -14,6 +14,7 @@ class Canvas extends Component {
     this.state = {
       bg: "#ecf1f5",
       clr: "red",
+      image : ""
     };
   }
 
@@ -71,7 +72,7 @@ class Canvas extends Component {
       line: this.line,
     };
     // We use the native fetch API to make requests to the server
-    const req = await fetch("http://localhost:4000/paint", {
+    const req = await fetch("http://127.0.0.1:8000/paint", {
       method: "post",
       body: JSON.stringify(body),
       headers: {
@@ -94,18 +95,25 @@ class Canvas extends Component {
   };
 
   handleImg =() =>{
-    const data = this.canvas.toDataURL();
-
-    axios
-      .post("http://localhost:4000/users/post", data)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    console.log(data);
+    const data = this.canvas.toDataURL('image/png');
+    this.setState({image:data})
+    // canvasimage = canvas.toDataURL('image/png');
+    // data.replace('/^data:image/[^;]/', 'data:application/octet-stream')
+    const w = window.open('about:blank', 'image from canvas');
+    w.document.write("<img src='"+data+"' alt='from canvas'/>");
+    alert(data);
   }
+    
+    // axios
+    //   .post(`http://127.0.0.1:8000/`,{'data' : data})
+    //   .then((res) => {
+    //     console.log(res.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    //console.log(data);
+  
 
   componentDidMount() {
     // Here we set up the properties of the canvas element.
@@ -163,7 +171,7 @@ class Canvas extends Component {
           onMouseMove={this.onMouseMove}
         />
         <button onClick={this.handleImg}>DOWNLOAD</button>
-        
+        <img src={`data:image/png;base64,${this.state.image}`}/>
       </>
     );
   }
